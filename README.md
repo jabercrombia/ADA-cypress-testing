@@ -1,83 +1,99 @@
-# Cypress Image Accessibility Test
+# Python Webpage Alt Tag Test
 
 ## Overview
-This Cypress test ensures that all `<img>` tags on a webpage contain `alt` attributes, improving web accessibility and compliance with WCAG guidelines.
+This Python script uses Selenium to check if all `<img>` tags on a webpage have `alt` attributes, improving accessibility and compliance with WCAG standards.
 
 ## Prerequisites
-- **Node.js** (v16+ recommended)
-- **Cypress** installed
+- **Python 3.x** installed
+- **Google Chrome** (or another browser)
+- **Chromedriver** (or appropriate WebDriver for your browser)
+- **Selenium** installed
 
 ## Installation
-Clone the repository and install dependencies:
 
+### 1. Install Python (if not already installed)
+If Python is not installed, install it via Homebrew:
 ```sh
-git clone https://github.com/your-repo/cypress-image-accessibility.git
-cd cypress-image-accessibility
-npm install
+brew install python
 ```
 
-## Running the Test
-
-### Open Cypress Test Runner (GUI)
+### 2. Install Selenium
+Run the following command:
 ```sh
-npx cypress open
+python3 -m pip install selenium
 ```
-- Select and run the test in an interactive browser.
 
-### Run Test in Headless Mode
+### 3. Download the WebDriver
+- Download the appropriate WebDriver for your browser:
+  - **Chrome:** [ChromeDriver](https://sites.google.com/chromium.org/driver/)
+  - **Firefox:** [GeckoDriver](https://github.com/mozilla/geckodriver/releases)
+- Place it in your system `PATH` or specify its location in the script.
+
+## Running the Script
+
+Save the following script as `check_alt_tags.py`:
+
+```python
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+
+# Replace with your webpage URL
+URL = "https://www.exmaple.com"
+
+# Set up Selenium WebDriver (Ensure chromedriver is in your PATH)
+driver = webdriver.Chrome()
+
+driver.get(URL)
+
+# Find all <img> tags
+images = driver.find_elements(By.TAG_NAME, "img")
+
+# Check for missing or empty alt attributes
+missing_alt = []
+for img in images:
+    alt_text = img.get_attribute("alt")
+    if not alt_text:
+        missing_alt.append(img.get_attribute("src"))
+
+# Output results
+if missing_alt:
+    print("❌ Images missing alt attributes:")
+    for src in missing_alt:
+        print(f"- {src}")
+else:
+    print("✅ All images have alt attributes!")
+
+# Close the browser
+driver.quit()
+```
+
+### Run the script:
 ```sh
-npx cypress run
-```
-- Executes all tests without opening the UI.
-
-## Test Code
-The test verifies that all images on the website have a valid `alt` attribute:
-
-```javascript
-describe('Image Accessibility Test', () => {
-  it('Ensures all <img> tags have alt attributes', () => {
-    cy.visit('https://www.examples.com'); // Replace with your URL
-
-    cy.get('img').each(($img) => {
-      cy.wrap($img)
-        .should('have.attr', 'alt')
-        .and('not.be.empty');
-    });
-  });
-});
+python3 check_alt_tags.py
 ```
 
-## Cypress Folder Structure
-```plaintext
-cypress/
-│── e2e/
-│   ├── image-accessibility.cy.js  # Image accessibility test
-│── screenshots/                    # Captured test screenshots (ignored in .gitignore)
-│── videos/                         # Test run recordings (ignored in .gitignore)
+## Using a Virtual Environment (Recommended)
+Instead of installing system-wide dependencies, create a virtual environment:
+```sh
+python3 -m venv venv
+source venv/bin/activate
+pip install selenium
+```
+After use, deactivate it:
+```sh
+deactivate
 ```
 
-## Cypress Configuration
-Modify **`cypress.config.js`** if needed:
-
-```javascript
-const { defineConfig } = require('cypress');
-
-module.exports = defineConfig({
-  e2e: {
-    baseUrl: 'https://www.example.com', // Update with your site
-    viewportWidth: 1280,
-    viewportHeight: 720,
-  },
-});
-```
-
-## Why This Test Is Important
-**Improves accessibility** – Ensures images have descriptive `alt` text for screen readers.  
-**Enhances SEO** – Search engines use `alt` text for indexing images.  
-**Compliance** – Helps meet WCAG and ADA accessibility standards.  
+## Why This Test is Important
+**Enhances accessibility** – Helps visually impaired users using screen readers.
+**Improves SEO** – Search engines use alt text for indexing images.
+**Ensures compliance** – Meets WCAG and ADA accessibility standards.
 
 ## Additional Resources
-- [Cypress Documentation](https://docs.cypress.io/)
+- [Selenium Documentation](https://www.selenium.dev/documentation/)
 - [Web Content Accessibility Guidelines (WCAG)](https://www.w3.org/WAI/standards-guidelines/wcag/)
 - [Why Alt Text Matters](https://webaim.org/techniques/alttext/)
+
+## License
+This project is licensed under the MIT License.
 
